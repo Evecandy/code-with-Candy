@@ -72,6 +72,14 @@
             color: white;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             animation: bounce 2s ease-in-out infinite;
+            overflow: hidden; /* This will ensure the image stays within the circular boundary */
+            object-fit: cover; /* This ensures the image covers the area properly */
+        }
+        .profile-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         @keyframes bounce {
@@ -406,7 +414,9 @@
 <div class="container">
     <!-- Header Section -->
     <header class="header glass">
-        <div class="profile-img">👩‍💻</div>
+        <div class="profile-img">
+            <img src="image/eve-photo.png" alt="Eve Candy Mutunga">
+        </div>
         <h1>Eve Candy Mutunga</h1>
         <h2>Junior Java Developer 🚀</h2>
         <p>Computer Systems Engineer passionate about building robust backend solutions and delivering quality software experiences. Ready to bring creativity and technical expertise to your startup team! 🌟</p>
