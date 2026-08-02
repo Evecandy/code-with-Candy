@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eve Candy Mutunga - Java Developer</title>
+    <script src="https://js.stripe.com/v3/"></script>
     <style>
         * {
             margin: 0;
@@ -72,8 +73,8 @@
             color: white;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             animation: bounce 2s ease-in-out infinite;
-            overflow: hidden; /* This will ensure the image stays within the circular boundary */
-            object-fit: cover; /* This ensures the image covers the area properly */
+            overflow: hidden;
+            object-fit: cover;
         }
         .profile-img img {
             width: 100%;
@@ -106,6 +107,231 @@
             color: #777;
             max-width: 600px;
             margin: 0 auto;
+        }
+
+        /* Floating Heart Button */
+        .floating-heart {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #FFB366, #FFDAB9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 179, 102, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        .floating-heart:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(255, 179, 102, 0.6);
+        }
+
+        .floating-heart .heart-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        @keyframes heartbeat {
+            0%, 50%, 100% { transform: scale(1); }
+            25%, 75% { transform: scale(1.05); }
+        }
+
+        /* Payment Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .payment-modal {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 30px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        .modal-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .service-options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            border-color: rgba(255, 179, 102, 0.5);
+        }
+
+        .service-card.selected {
+            background: rgba(255, 179, 102, 0.3);
+            border-color: #FFB366;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .service-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .service-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #FFB366;
+        }
+
+        .service-description {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .service-features {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .service-features li {
+            margin-bottom: 3px;
+        }
+
+        .payment-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .payment-button {
+            background: linear-gradient(45deg, #FFB366, #FFDAB9);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 179, 102, 0.4);
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .payment-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 179, 102, 0.6);
+        }
+
+        .payment-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .selected-service {
+            background: rgba(255, 179, 102, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .selected-service h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .selected-service .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFB366;
         }
 
         /* Sections */
@@ -386,6 +612,18 @@
             .achievements-grid {
                 grid-template-columns: 1fr;
             }
+
+            .floating-heart {
+                bottom: 20px;
+                right: 20px;
+                width: 55px;
+                height: 55px;
+            }
+
+            .payment-modal {
+                padding: 30px 20px;
+                margin: 20px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -407,6 +645,15 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .floating-heart {
+                width: 50px;
+                height: 50px;
+            }
+
+            .floating-heart .heart-icon {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -415,7 +662,7 @@
     <!-- Header Section -->
     <header class="header glass">
         <div class="profile-img">
-            <img src="image/eve-photo.png" alt="Eve Candy Mutunga">
+            <img src="AN3I3185.png" alt="Eve Candy Mutunga">
         </div>
         <h1>Eve Candy Mutunga</h1>
         <h2>Junior Java Developer 🚀</h2>
@@ -585,7 +832,231 @@
     </section>
 </div>
 
+<!-- Floating Heart Button -->
+<div class="floating-heart" id="heartButton">
+    <span class="heart-icon">❤️</span>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" id="paymentModal">
+    <div class="payment-modal">
+        <span class="modal-close" id="modalClose">&times;</span>
+        <h2 class="modal-title">💝 Support Eve's Work</h2>
+        <p class="modal-subtitle">Get personalized help and support my journey as a developer!</p>
+
+        <div class="service-options" id="serviceOptions">
+            <div class="service-card" data-service="ama" data-price="5">
+                <div class="service-header">
+                    <div class="service-title">💬 Ask Me Anything</div>
+                    <div class="service-price">$5</div>
+                </div>
+                <div class="service-description">
+                    Get expert advice on programming, career, or tech questions
+                </div>
+                <ul class="service-features">
+                    <li>📧 48-hour email response guarantee</li>
+                    <li>🔄 Up to 3 follow-up questions included</li>
+                    <li>💡 Perfect for quick consultations</li>
+                </ul>
+            </div>
+
+            <div class="service-card" data-service="video" data-price="10">
+                <div class="service-header">
+                    <div class="service-title">📹 15-Minute Video Call</div>
+                    <div class="service-price">$10</div>
+                </div>
+                <div class="service-description">
+                    Personal 1-on-1 video consultation for complex discussions
+                </div>
+                <ul class="service-features">
+                    <li>📅 Google Meet integration</li>
+                    <li>🗓️ Calendar scheduling with Calendly</li>
+                    <li>🎯 Focused problem-solving session</li>
+                </ul>
+            </div>
+
+            <div class="service-card" data-service="review" data-price="15">
+                <div class="service-header">
+                    <div class="service-title">🔍 Code Review</div>
+                    <div class="service-price">$15</div>
+                </div>
+                <div class="service-description">
+                    Professional code review with detailed feedback and suggestions
+                </div>
+                <ul class="service-features">
+                    <li>📝 Detailed written feedback</li>
+                    <li>⚡ Performance optimization tips</li>
+                    <li>🏆 Best practices recommendations</li>
+                </ul>
+            </div>
+
+            <div class="service-card" data-service="consultation" data-price="25">
+                <div class="service-header">
+                    <div class="service-title">🚀 Mini Consultation</div>
+                    <div class="service-price">$25</div>
+                </div>
+                <div class="service-description">
+                    30-minute deep-dive consultation for project planning and architecture
+                </div>
+                <ul class="service-features">
+                    <li>📹 Video call via Google Meet</li>
+                    <li>🏗️ Project architecture guidance</li>
+                    <li>📋 Actionable recommendations</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="payment-section">
+            <div class="selected-service" id="selectedService" style="display: none;">
+                <h4 id="selectedTitle"></h4>
+                <div class="price" id="selectedPrice"></div>
+            </div>
+            <button class="payment-button" id="paymentButton" disabled>
+                Select a service to continue
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
+    // Initialize Stripe (you'll need to replace with your actual publishable key)
+    const stripe = Stripe('pk_test_51S7PQVJbFiLDDRsfbB14mIgOvzZNCsUoSWiR6b8z25HkLUFM0sCIC2vFHveK9GGgpAxTOqLoXxjbcfaWtOJ3GpNE00EpMkAUPO');
+
+    // Heart button and modal functionality
+    const heartButton = document.getElementById('heartButton');
+    const paymentModal = document.getElementById('paymentModal');
+    const modalClose = document.getElementById('modalClose');
+    const serviceCards = document.querySelectorAll('.service-card');
+    const selectedService = document.getElementById('selectedService');
+    const selectedTitle = document.getElementById('selectedTitle');
+    const selectedPrice = document.getElementById('selectedPrice');
+    const paymentButton = document.getElementById('paymentButton');
+
+    let currentService = null;
+    let currentPrice = 0;
+
+    // Open modal when heart button is clicked
+    heartButton.addEventListener('click', () => {
+        paymentModal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    });
+
+    // Close modal when close button is clicked
+    modalClose.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside the modal content
+    paymentModal.addEventListener('click', (e) => {
+        if (e.target === paymentModal) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && paymentModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    function closeModal() {
+        paymentModal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+        // Reset selections
+        serviceCards.forEach(c => c.classList.remove('selected'));
+        selectedService.style.display = 'none';
+        paymentButton.disabled = true;
+        paymentButton.textContent = 'Select a service to continue';
+        currentService = null;
+        currentPrice = 0;
+    }
+
+    // Service card selection
+    serviceCards.forEach(card => {
+        card.addEventListener('click', () => {
+            // Remove selection from all cards
+            serviceCards.forEach(c => c.classList.remove('selected'));
+
+            // Add selection to clicked card
+            card.classList.add('selected');
+
+            // Get service details
+            currentService = card.dataset.service;
+            currentPrice = parseInt(card.dataset.price);
+
+            // Update selected service display
+            const title = card.querySelector('.service-title').textContent;
+            selectedTitle.textContent = title;
+            selectedPrice.textContent = `${currentPrice}`;
+
+            // Show selected service and enable payment button
+            selectedService.style.display = 'block';
+            paymentButton.disabled = false;
+            paymentButton.textContent = `Pay ${currentPrice} - Continue to Stripe`;
+        });
+    });
+
+    // Payment button functionality
+    paymentButton.addEventListener('click', async () => {
+        if (!currentService) return;
+
+        paymentButton.textContent = 'Processing...';
+        paymentButton.disabled = true;
+
+        try {
+            // In a real implementation, you would:
+            // 1. Create a payment session on your backend
+            // 2. Redirect to Stripe Checkout
+
+            // For demo purposes, we'll show what would happen:
+            const serviceDetails = {
+                ama: {
+                    name: 'Ask Me Anything',
+                    description: '48-hour email response with up to 3 follow-ups'
+                },
+                video: {
+                    name: '15-Minute Video Call',
+                    description: 'Personal consultation via Google Meet'
+                },
+                review: {
+                    name: 'Code Review',
+                    description: 'Professional code review with detailed feedback'
+                },
+                consultation: {
+                    name: 'Mini Consultation',
+                    description: '30-minute project architecture consultation'
+                }
+            };
+
+            // Simulate payment processing
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Show success message
+            alert(`🎉 Payment successful!
+
+Service: ${serviceDetails[currentService].name}
+Price: ${currentPrice}
+
+What happens next:
+• You'll receive a confirmation email shortly
+• For email services: I'll respond within 48 hours
+• For video calls: You'll get a Calendly link to schedule
+• For code reviews: Instructions on how to share your code
+
+Thank you for supporting my work! 💝`);
+
+            closeModal();
+
+            // In a real implementation, you might redirect to a success page
+            // window.location.href = '/success?service=' + currentService;
+
+        } catch (error) {
+            console.error('Payment failed:', error);
+            alert('Payment failed. Please try again.');
+            paymentButton.textContent = `Pay ${currentPrice} - Continue to Stripe`;
+            paymentButton.disabled = false;
+        }
+    });
+
     // Add smooth scrolling and interactive elements
     document.addEventListener('DOMContentLoaded', function() {
         // Animate elements on scroll
@@ -631,6 +1102,21 @@
                 this.style.transform = 'translateY(0)';
             });
         });
+
+        // Add floating animation to heart button
+        const heart = document.getElementById('heartButton');
+        let isAnimating = false;
+
+        setInterval(() => {
+            if (!isAnimating) {
+                isAnimating = true;
+                heart.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    heart.style.transform = 'scale(1)';
+                    isAnimating = false;
+                }, 300);
+            }
+        }, 3000);
     });
 </script>
 </body>
